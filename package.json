@@ -1,0 +1,22 @@
+{
+  "name": "logintemplatebackend",
+  "version": "1.0.0",
+  "description": "Generic backend",
+  "main": "server",
+  "scripts": {
+    "dev": "nodemon server",
+    "start": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "AB",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "mysql": "^2.18.1",
+    "winston": "^3.18.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}

@@ -1,0 +1,14 @@
+@host = http://localhost
+@port = 3000
+@url = {{host}}:{{port}}
+
+
+###get all records from :table
+
+GET {{url}}/vevo
+Content-Type: application/json
+
+###get one records from :table
+
+GET {{url}}/forgalom/247
+Content-Type: application/json
