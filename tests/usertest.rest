@@ -37,10 +37,10 @@ POST {{url}}/users/registration
 Content-Type: application/json
 
 {
-    "email":"valaki@gmail.com",
+    "email":"valakik@gmail.com",
     "name":"Bigfoot",
-    "password": "123",
-    "confirm": "123"
+    "password": "Secure123",
+    "confirm": "Secure123"
 }
 
 
@@ -51,4 +51,9 @@ Content-Type: application/json
 {
     "categoryName": "Cukrok"
 }
+
+
+###
+GET  {{url}}/users/id/lt/3
+Content-Type: application/json
 

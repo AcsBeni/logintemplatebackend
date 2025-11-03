@@ -24,7 +24,7 @@ DBUSER=root
 DBPASS=
 DBNAME=2025_katicabufe
 DEBUG=1
-
+npm install crypto-js
 .env
 PORT=3000 */
 

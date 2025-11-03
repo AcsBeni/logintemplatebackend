@@ -2,15 +2,26 @@ const express = require('express');
 const router = express.Router();
 const {query} = require('../utils/database');
 var SHA1 = require("crypto-js/sha1");
+const { error } = require('winston');
+const passwdRegExp = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
 
 //LOGIN
 router.post('/:table/login',(req,res)=>{
     let {email, password} = req.body
     let table = req.params.table
-    //TODO: validáció kell
+
+    if(!email || !password){
+        return res.status(400).send({error: "Hiányzó adatok!"})
+        
+    }
+
+    
+
     query(`SELECT * FROM ${table} WHERE email=? AND password=?` ,[email, SHA1(password).toString()], (error, results) =>{
         if(error) return res.status(500).json({errno: error.errno, msg: "Hiba történt :("}) ;
-      
+        if(results.length ==0){
+            return res.send({error: "Hibás belépési adatok!"})
+        }
         res.status(200).json(results)
     },req);
 })
@@ -19,13 +30,51 @@ router.post('/:table/registration',(req,res)=>{
     const table = req.params.table
     let {name, email, password, confirm} = req.body;
 
+    if(!email || !password || !name || !confirm){
+        return res.status(400).send({error: "Hiányzó adatok!"})
+        
+    }
+    if(password != confirm){
+        return res.status(400).send({error: "A két jelszó nem egyezik meg!"})      
+    }
+    if(!password.match(passwdRegExp)){
+        return res.status(400).send({error: "A jelszó nem elég biztonságos!"})      
+    }
     //TODO: validációt kell még írni
-    query(`INSERT INTO ${table} (name, email, password) VALUES(?,?,?) ` ,[name,email,SHA1(password).toString()], (error, results) =>{
+    query(`SELECT id FROM ${table} WHERE email =? `,[email],(error,results)=>{
+        if(error) return res.status(500).json({errno: error.errno, msg: "Hiba történt :("}) ;
+        if(results.length !== 0){
+            return res.status(400).json({ error: "Már létezik egy felhasználó ezzel az email címmel!" });
+           
+        }
+
+    },req)
+    query(`INSERT INTO ${table} (name, email, password, role) VALUES(?,?,?,'user') ` ,[name,email,SHA1(password).toString()], (error, results) =>{
         if(error) return res.status(500).json({errno: error.errno, msg: "Hiba történt :("}) ;
       
         res.status(200).json(results)
     },req);  
 })
+//Select records from :table by :field
+router.get("/:table/:field/:op/:value", (req, res) => {
+    const { table, field, op: opKey, value: rawValue } = req.params;
+    const op = getOp(opKey); // your helper function should return a safe operator string
+    let value = rawValue;
+  
+    if (opKey === "lk") {
+      value = `%${value}%`;
+    }
+  
+    // ✅ Use placeholders for identifiers
+    const sql = `SELECT * FROM ?? WHERE ?? ${op} ?`;
+  
+    query(sql, [table, field, value], (error, results) => {
+      if (error)
+        return res.status(500).json({ errno: error.errno, msg: "Hiba történt :(" });
+  
+      res.status(200).json(results);
+    });
+  });
 
 //Select All records from table
 router.get("/:table", (req, res)=>{
@@ -94,6 +143,18 @@ router.get("/:table/:id", (req, res)=>{
 })
 
 
+function getOp(op){
+    switch(op){
+        case 'eq': {op = '='; break;}
+        case 'lt': {op = '<';break;}
+        case 'lte':{op = '<=';break;}
+        case 'gt': {op = '>';break;}
+        case 'gte':{op = '>=';break;}
+        case 'not':{op = '<>';break;}
+        case 'lk': {op = 'like';break;}
+    }
+    return op;
+}
 
 module.exports = router;
 
