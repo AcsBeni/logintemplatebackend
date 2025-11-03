@@ -5,10 +5,50 @@
 
 ###get all records from :table
 
-GET {{url}}/vevo
+GET {{url}}/kategoria
 Content-Type: application/json
 
 ###get one records from :table
 
 GET {{url}}/forgalom/247
 Content-Type: application/json
+
+
+###Post new record into :table
+POST {{url}}/kategoria
+Content-Type: application/json
+
+{
+    "categoryName": "Édességek"
+    
+}
+
+
+###Login
+POST {{url}}/users/login
+Content-Type: application/json
+
+{
+    "email":"ember@gmail.com",
+    "password": "123"
+}
+###Registration
+POST {{url}}/users/registration
+Content-Type: application/json
+
+{
+    "email":"valaki@gmail.com",
+    "name":"Bigfoot",
+    "password": "123",
+    "confirm": "123"
+}
+
+
+###Update record :table by :id
+PATCH {{url}}/kategoria/14
+Content-Type: application/json
+
+{
+    "categoryName": "Cukrok"
+}
+
