@@ -9,7 +9,7 @@ var pool = mysql.createPool({
     host: 'localhost',
     user: 'root',
     password: '',
-    database: '2025_katicabufe'
+    database: '2025_pizzeria'
     /*
     host: process.env.DBHOST,
     user: process.env.DBUSER,

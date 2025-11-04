@@ -28,7 +28,7 @@ router.post('/:table/login',(req,res)=>{
 //Register
 router.post('/:table/registration',(req,res)=>{
     const table = req.params.table
-    let {name, email, password, confirm} = req.body;
+    let {name, email, password, confirm, phone, adress} = req.body;
 
     if(!email || !password || !name || !confirm){
         return res.status(400).send({error: "Hiányzó adatok!"})
@@ -41,19 +41,23 @@ router.post('/:table/registration',(req,res)=>{
         return res.status(400).send({error: "A jelszó nem elég biztonságos!"})      
     }
     //TODO: validációt kell még írni
-    query(`SELECT id FROM ${table} WHERE email =? `,[email],(error,results)=>{
-        if(error) return res.status(500).json({errno: error.errno, msg: "Hiba történt :("}) ;
-        if(results.length !== 0){
+    query(`SELECT id FROM ${table} WHERE email = ?`, [email], (error, results) => {
+        if (error) return res.status(500).json({ errno: error.errno, msg: "Hiba történt :(" });
+    
+        if (results.length !== 0) {
             return res.status(400).json({ error: "Már létezik egy felhasználó ezzel az email címmel!" });
-           
         }
-
-    },req)
-    query(`INSERT INTO ${table} (name, email, password, role) VALUES(?,?,?,'user') ` ,[name,email,SHA1(password).toString()], (error, results) =>{
-        if(error) return res.status(500).json({errno: error.errno, msg: "Hiba történt :("}) ;
-      
-        res.status(200).json(results)
-    },req);  
+    
+       
+        query(
+            `INSERT INTO ${table} (name, email, password, role, phone, adress) VALUES(?, ?, ?, 'user', ?, ?)`,
+            [name, email, SHA1(password).toString(), phone, adress],
+            (error, results) => {
+                if (error) return res.status(500).json({ errno: error.errno, msg: "Hiba történt :(" });
+                res.status(200).json(results);
+            }
+        );
+    }, req);
 })
 //Select records from :table by :field
 router.get("/:table/:field/:op/:value", (req, res) => {
