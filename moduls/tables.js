@@ -20,7 +20,7 @@ router.post('/:table/login',(req,res)=>{
     query(`SELECT * FROM ${table} WHERE email=? AND password=?` ,[email, SHA1(password).toString()], (error, results) =>{
         if(error) return res.status(500).json({errno: error.errno, msg: "Hiba történt :("}) ;
         if(results.length ==0){
-            return res.send({error: "Hibás belépési adatok!"})
+            return res.status(500).send({error: "Hibás belépési adatok!"})
         }
         res.status(200).json(results)
     },req);
@@ -40,7 +40,7 @@ router.post('/:table/registration',(req,res)=>{
     if(!password.match(passwdRegExp)){
         return res.status(400).send({error: "A jelszó nem elég biztonságos!"})      
     }
-    //TODO: validációt kell még írni
+  
     query(`SELECT id FROM ${table} WHERE email = ?`, [email], (error, results) => {
         if (error) return res.status(500).json({ errno: error.errno, msg: "Hiba történt :(" });
     
@@ -69,7 +69,7 @@ router.get("/:table/:field/:op/:value", (req, res) => {
       value = `%${value}%`;
     }
   
-    // ✅ Use placeholders for identifiers
+  
     const sql = `SELECT * FROM ?? WHERE ?? ${op} ?`;
   
     query(sql, [table, field, value], (error, results) => {
