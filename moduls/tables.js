@@ -136,10 +136,10 @@ router.patch('/:table/:id',(req,res)=>{
 
 
 //delete by id
-router.get("/:table/:id", (req, res)=>{
+router.delete("/:table/:id", (req, res)=>{
     const table = req.params.table
     const id = req.params.id
-    query(`DELETE * FROM ${table} WHERE id=?` ,[id], (error, results) =>{
+    query(`DELETE FROM ${table} WHERE id=?` ,[id], (error, results) =>{
         if(error) return res.status(500).json({errno: error.errno, msg: "Hiba történt :("}) ;
       
         res.status(200).json(results)

@@ -57,3 +57,7 @@ Content-Type: application/json
 GET  {{url}}/users/id/lt/3
 Content-Type: application/json
 
+###Delete
+DELETE {{url}}/users/10
+Content-Type: application/json
+
