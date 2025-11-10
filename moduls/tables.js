@@ -3,7 +3,20 @@ const router = express.Router();
 const {query} = require('../utils/database');
 var SHA1 = require("crypto-js/sha1");
 const { error } = require('winston');
+const multer =require('multer')
 const passwdRegExp = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, '/uploads')
+    },
+    filename: function (req, file, cb) {
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+      cb(null, file.fieldname + '-' + uniqueSuffix)
+    }
+  })
+  
+  const upload = multer({ storage: storage })
 
 //LOGIN
 router.post('/:table/login',(req,res)=>{
