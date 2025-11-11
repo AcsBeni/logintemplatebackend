@@ -11,6 +11,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use('/', tables);
 
+app.use('/uploads' ,express.static('uploads'))
 
 
 app.listen(process.env.PORT, () => {
