@@ -26,6 +26,9 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+//status  váltás User
+
+
 router.post('/upload', upload.single('image'), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: 'Hiányzó fájl!' });
@@ -203,6 +206,8 @@ function getOp(op){
     }
     return op;
 }
+
+
 
 module.exports = router;
 

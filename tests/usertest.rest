@@ -61,3 +61,10 @@ Content-Type: application/json
 DELETE {{url}}/users/10
 Content-Type: application/json
 
+###Update user status
+PATCH {{url}}/users/14
+Content-Type: application/json
+
+{
+    "status": 1
+}
