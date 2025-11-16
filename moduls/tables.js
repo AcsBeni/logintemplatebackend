@@ -29,17 +29,18 @@ const upload = multer({ storage: storage });
 //status  váltás User
 
 
-router.post('/upload', upload.single('image'), (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ error: 'Hiányzó fájl!' });
-  }
+router.post('/upload', upload.single('image'), (req, res)=>{
+    if (!req.file){
+        return res.status(500).json({ error: 'Nincsfálj feltöltve!' });
+    }
+    res.status(200).json({
+        message: 'Fájl feltöltve!',
+        filename: req.file.filename,
+        path: '/uploads'
+    });
+});
 
-  res.status(200).json({
-    message: 'Fájl feltöltve',
-    filename: req.file.filename,
-    path: '/uploads/' + req.file.filename
-  });
-})
+
 //LOGIN
 router.post('/:table/login',(req,res)=>{
     let {email, password} = req.body
@@ -49,9 +50,6 @@ router.post('/:table/login',(req,res)=>{
         return res.status(400).send({error: "Hiányzó adatok!"})
         
     }
-
-    
-
     query(`SELECT * FROM ${table} WHERE email=? AND password=?` ,[email, SHA1(password).toString()], (error, results) =>{
         if(error) return res.status(500).json({errno: error.errno, msg: "Hiba történt :("}) ;
         if(results.length ==0){
@@ -169,18 +167,17 @@ router.patch('/:table/:id',(req,res)=>{
 })
 
 //Delete uploaded file
-router.delete("/image/:filename", (req, res)=>{
-    const filename = req.params.filename;
-    let pathname = path.join(__dirname, '../uploads')
-    
-    fs.unlink(pathname + filename, (err)=>{
-        if(err){
-            return res.status(500).json({error: 'A fájl törlése sikertelen'})
+router.delete('/image/:filename', (req, res) => {
+    let filename = req.params.filename;
+    let pathname = path.join(__dirname, '../uploads/');
+  
+    fs.unlink(pathname + filename, (err) =>{
+        if (err) {
+            return res.status(500).json({ error: 'A fájl tölrése sikertelen!'});
         }
-        return res.status(200).json({message: "A kép törölve lett"})
-    })
-})
-
+        return res.status(200).json({ message: 'A kép törölve!'});
+    });
+});
 
 //delete by id
 router.delete("/:table/:id", (req, res)=>{
