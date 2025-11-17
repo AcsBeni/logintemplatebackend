@@ -5,7 +5,7 @@
 
 ###get all records from :table
 
-GET {{url}}/users
+GET {{url}}/pizzas
 Content-Type: application/json
 
 ###get one records from :table

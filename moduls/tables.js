@@ -55,6 +55,9 @@ router.post('/:table/login',(req,res)=>{
         if(results.length ==0){
             return res.status(500).send({error: "Hibás belépési adatok!"})
         }
+        if(results[0].status == 0){
+            return res.status(500).send({error: "   ív!"})
+        }
         res.status(200).json(results)
     },req);
 })
