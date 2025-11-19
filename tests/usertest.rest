@@ -8,6 +8,26 @@
 GET {{url}}/pizzas
 Content-Type: application/json
 
+###SEND EMAIL
+POST {{url}}/sendemail
+Content-Type: application/json
+
+{
+    "to": "kitizgat7@gmail.com",
+    "subject": "Teszt üzenet",
+    "template": "registration",
+    "data": {
+        "name": "Sándor",
+        "email": "Sandor@gmail.com",
+        "password": "Teszt1234",
+        "url": "http://localhost:3000",
+        "company": "Pizzatürr"
+        }
+    
+}
+
+
+
 ###get one records from :table
 
 GET {{url}}/forgalom/247

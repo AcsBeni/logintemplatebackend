@@ -6,7 +6,20 @@ const { error } = require('winston');
 const multer =require('multer')
 const path = require('path')
 const fs = require('fs');
+const nodemailer = require('nodemailer');
+const { text } = require('stream/consumers');
+let ejs = require('ejs');
 const passwdRegExp = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
+
+const transporter = nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port: process.env.SMTP_PORT,
+    
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
+    },
+  });
 
 const uploadDir = path.join(__dirname, '../uploads');
 if (!fs.existsSync(uploadDir)) {
@@ -24,11 +37,40 @@ const storage = multer.diskStorage({
   }
 });
 
+
 const upload = multer({ storage: storage });
 
+
+//Sending email
+router.post('/sendemail', async (req, res) => {
+    const { to, subject, template, data } = req.body;
+
+    if (!to || !subject || !template) {
+        return res.status(400).send({ error: 'Hiányzó adatok!' });
+    }
+    const mailOptions = {
+        from: process.env.ADMINMAIL,
+        to: to,
+        subject: subject,
+        html: await renderTemplate(template, data || {})
+    };
+    try{
+        await transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                return res.status(500).send({ error: 'Email küldése sikertelen!' });
+            } else {
+                return res.status(200).send({ message: 'Email sikeresen elküldve!' });
+            }
+        });
+
+    }
+    catch(err){
+        return res.status(500).send({ error: 'Hiba történt az email küldése során! ' + err.message });
+    }
+});
+
+
 //status  váltás User
-
-
 router.post('/upload', upload.single('image'), (req, res)=>{
     if (!req.file){
         return res.status(500).json({ error: 'Nincsfálj feltöltve!' });
@@ -207,7 +249,11 @@ function getOp(op){
     return op;
 }
 
-
+async function renderTemplate(templateName, data) {
+    const tmpfile = path.join(__dirname, '../templates/',templateName + '.ejs');
+    return await ejs.renderFile(tmpfile, data);
+    
+}
 
 module.exports = router;
 
