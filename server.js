@@ -9,9 +9,10 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use('/', tables);
+
 
 app.use('/uploads' ,express.static('uploads'))
+app.use('/', tables);
 
 
 app.listen(process.env.PORT, () => {
