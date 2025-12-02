@@ -234,6 +234,26 @@ router.delete("/:table/:id", (req, res)=>{
         res.status(200).json(results)
     },req);
 })
+//Detele all records
+router.delete("/:table/:field/:op/:value", (req, res) => {
+    const { table, field, op: opKey, value: rawValue } = req.params;
+    const op = getOp(opKey); // your helper function should return a safe operator string
+    let value = rawValue;
+  
+    if (opKey === "lk") {
+      value = `%${value}%`;
+    }
+  
+  
+    const sql = `DELETE FROM ?? WHERE ?? ${op} ?`;
+  
+    query(sql, [table, field, value], (error, results) => {
+      if (error)
+        return res.status(500).json({ errno: error.errno, msg: "Hiba történt :(" });
+  
+      res.status(200).json(results);
+    });
+  });
 
 
 function getOp(op){
